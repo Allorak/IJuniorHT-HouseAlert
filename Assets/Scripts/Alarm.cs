@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -12,6 +10,7 @@ public class Alarm : MonoBehaviour
     private AudioSource _audioSource;
     private Animator _animator;
     private Coroutine _changeVolumeJob;
+    private int _isSetParameterHash = Animator.StringToHash("IsSet");
 
     private void Start()
     {
@@ -26,7 +25,7 @@ public class Alarm : MonoBehaviour
 
         _audioSource.Play();
         _changeVolumeJob = StartCoroutine(ChangeVolume(1, _soundIncreaseDuraion));
-        _animator.SetBool("IsSet", true);
+        _animator.SetBool(_isSetParameterHash, true);
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -35,7 +34,7 @@ public class Alarm : MonoBehaviour
             StopCoroutine(_changeVolumeJob);
 
         _changeVolumeJob = StartCoroutine(ChangeVolume(0, _soundDecreaseDuraion));
-        _animator.SetBool("IsSet", false);
+        _animator.SetBool(_isSetParameterHash, false);
     }
 
     private IEnumerator ChangeVolume(float targetVolume, float duration)

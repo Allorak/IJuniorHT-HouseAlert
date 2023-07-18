@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -10,7 +8,8 @@ public class Player : MonoBehaviour
 
     private SpriteRenderer _renderer;
     private Animator _animator;
-    private bool _isMoving = false;
+    private bool _isMoving;
+    private int _speedParameterHash = Animator.StringToHash("Speed");
 
     private void Start()
     {
@@ -37,6 +36,6 @@ public class Player : MonoBehaviour
             _isMoving = false;
         }
 
-        _animator.SetFloat("Speed", _isMoving ?  _speed : 0);
+        _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
     }
 }
