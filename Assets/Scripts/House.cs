@@ -1,23 +1,20 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class House : MonoBehaviour
 {
-    [SerializeField] private Alarm _alarm;
-
-    private void Start()
-    {
-        _alarm = GetComponentInChildren<Alarm>();
-    }
+	[SerializeField] private UnityEvent _playerEntered;
+	[SerializeField] private UnityEvent _playerExited;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(_alarm is not null)
-            _alarm.TurnOn();
+		if(other.TryGetComponent(out Player player))
+			_playerEntered?.Invoke();
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if(_alarm is not null)
-            _alarm.TurnOff();
+        if(other.TryGetComponent(out Player player))
+			_playerExited?.Invoke();
     }
 }

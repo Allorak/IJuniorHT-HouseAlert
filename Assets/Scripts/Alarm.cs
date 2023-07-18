@@ -5,13 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Alarm : MonoBehaviour
 {
-    [SerializeField] private float _soundIncreaseDuraion;
-    [SerializeField] private float _soundDecreaseDuraion;
+    [SerializeField] private float _soundIncreaseDuration;
+    [SerializeField] private float _soundDecreaseDuration;
 
     private AudioSource _audioSource;
     private Animator _animator;
     private Coroutine _changeVolumeJob;
     private int _isSetParameterHash = Animator.StringToHash("IsSet");
+    private float _playSoundThreshold = 0;
+    private bool _isTurnedOn = false;
 
     private void Start()
     {
@@ -19,28 +21,27 @@ public class Alarm : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    public void TurnOn()
+    public void SwitchState()
     {
         if (_changeVolumeJob is not null)
             StopCoroutine(_changeVolumeJob);
 
-        _audioSource.Play();
-        _changeVolumeJob = StartCoroutine(ChangeVolume(1, _soundIncreaseDuraion));
-        _animator.SetBool(_isSetParameterHash, true);
-    }
+        _changeVolumeJob = StartCoroutine(
+            _isTurnedOn
+            ? ChangeVolume(0, _soundDecreaseDuration)
+            : ChangeVolume(1, _soundIncreaseDuration)
+            );
 
-    public void TurnOff()
-    {
-        if (_changeVolumeJob is not null)
-            StopCoroutine(_changeVolumeJob);
-
-        _changeVolumeJob = StartCoroutine(ChangeVolume(0, _soundDecreaseDuraion));
-        _animator.SetBool(_isSetParameterHash, false);
+        _isTurnedOn = !_isTurnedOn;
+        _animator.SetBool(_isSetParameterHash, _isTurnedOn);
     }
 
     private IEnumerator ChangeVolume(float targetVolume, float duration)
     {
         float volumeStep = 1f / duration;
+
+        if (targetVolume > _audioSource.volume)
+            _audioSource.Play();
 
         while (_audioSource.volume != targetVolume)
         {
@@ -48,7 +49,7 @@ public class Alarm : MonoBehaviour
             yield return null;
         }
 
-        if(_audioSource.volume == 0)
+        if(_audioSource.volume <= _playSoundThreshold)
             _audioSource.Stop();
     }
 }
