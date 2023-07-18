@@ -14,6 +14,8 @@ public class Alarm : MonoBehaviour
     private int _isSetParameterHash = Animator.StringToHash("IsSet");
     private float _playSoundThreshold = 0;
     private bool _isTurnedOn = false;
+    private float _minVolume = 0;
+    private float _maxVolume = 1;
 
     private void Start()
     {
@@ -28,8 +30,8 @@ public class Alarm : MonoBehaviour
 
         _changeVolumeJob = StartCoroutine(
             _isTurnedOn
-            ? ChangeVolume(0, _soundDecreaseDuration)
-            : ChangeVolume(1, _soundIncreaseDuration)
+            ? ChangeVolume(_minVolume, _soundDecreaseDuration)
+            : ChangeVolume(_maxVolume, _soundIncreaseDuration)
             );
 
         _isTurnedOn = !_isTurnedOn;
