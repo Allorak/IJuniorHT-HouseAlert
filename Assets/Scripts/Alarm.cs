@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(Animator))]
 public class Alarm : MonoBehaviour
 {
     [SerializeField] private float _soundIncreaseDuraion;
@@ -18,7 +19,7 @@ public class Alarm : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public void TurnOn()
     {
         if (_changeVolumeJob is not null)
             StopCoroutine(_changeVolumeJob);
@@ -28,7 +29,7 @@ public class Alarm : MonoBehaviour
         _animator.SetBool(_isSetParameterHash, true);
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    public void TurnOff()
     {
         if (_changeVolumeJob is not null)
             StopCoroutine(_changeVolumeJob);
